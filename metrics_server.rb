@@ -41,6 +41,13 @@ class MetricServer < Sinatra::Base
 
   post '/metrics' do
     begin
+      # Do math on minutes section, combine with seconds bits.
+      if (time = params[:build_time].match(/(\d*)m(\d*\.\d*)s/))
+        params[:build_time] = (time[1].to_i * 60).to_f + time[2].to_f
+      # Strip the trailing s from `time` submissions.
+      elsif (time = params[:build_time].match(/(\d*\.\d*)s/))
+        params[:build_time] = time[1]
+      end
       Metric.create( params )
       [200, "Sweet"]
     rescue Exception => e
