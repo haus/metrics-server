@@ -22,6 +22,7 @@ class MetricServer < Sinatra::Base
   set :static, TRUE
   require 'slim'
   require "#{File.dirname(__FILE__)}/models/metric"
+  Metric.raise_on_save_failure = true
 
   attr_accessor :metrics, :avg
 
@@ -41,8 +42,9 @@ class MetricServer < Sinatra::Base
   post '/metrics' do
     begin
       Metric.create( params )
+      [200, "Sweet"]
     rescue Exception => e
-      e.message
+      [418, "#{e.message} AND #{params.inspect}"]
     end
   end
 
