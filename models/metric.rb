@@ -1,8 +1,8 @@
 class Metric
   include DataMapper::Resource
-  property :id, Serial
-  property :date, DateTime
-  property :package, String
+  property :id, Serial, :key => true
+  property :date, DateTime, :required => true
+  property :package, String, :required => true
   property :dist, String
   property :build_time, Float
   property :build_user, String
