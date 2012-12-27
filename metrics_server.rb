@@ -20,12 +20,10 @@ class MetricServer < Sinatra::Base
 
   set :public_folder, File.dirname(__FILE__) + '/public'
   set :static, TRUE
-  @author = "Matthaus Owens"
-  @year = "2012"
   require 'slim'
   require "#{File.dirname(__FILE__)}/models/metric"
 
-  attr_accessor :author, :year, :metrics, :avg
+  attr_accessor :metrics, :avg
 
   get '/' do
     @metrics = Metric.all
