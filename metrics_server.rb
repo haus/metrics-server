@@ -11,6 +11,8 @@ require 'dm-postgres-adapter'
 
 class MetricServer < Sinatra::Base
   config_file = "#{File.dirname(__FILE__)}/conf/db.conf"
+
+  # Bail if no config
   unless File.exists?(config_file)
     STDERR.puts "wtf. no config file at #{config_file}"
     exit 1
