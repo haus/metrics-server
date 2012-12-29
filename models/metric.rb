@@ -17,3 +17,4 @@ DataMapper.finalize
 
 # automatically create the post table
 Metric.auto_upgrade!
+Metric.raise_on_save_failure = true

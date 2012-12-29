@@ -31,8 +31,6 @@ class MetricServer < Sinatra::Base
   DataMapper.setup(:default, "postgres://#{config['username']}:#{config['password']}@#{config['hostname']}/#{config['database']}")
   require "metric"
 
-  Metric.raise_on_save_failure = true
-
   attr_accessor :metrics, :avg
 
   get '/' do
