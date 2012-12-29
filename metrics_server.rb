@@ -2,9 +2,18 @@ require 'rubygems'
 require 'yaml'
 require 'sinatra/base'
 
-# Databasey stuff
-require 'data_mapper' # metagem, requires common plugins too.
-require 'dm-postgres-adapter'
+# Add models to the load path to make requiring metrics easier
+$: << "#{File.dirname(__FILE__)}/models"
+
+# Non-packaged gems
+['data_mapper', 'dm-postgres-adapter', 'slim'].each do |gem|
+  begin
+    require gem
+  rescue LoadError
+    STDERR.puts "#{gem} is required for the metrics app to function."
+    exit 1
+  end
+end
 
 class MetricServer < Sinatra::Base
   config_file = "#{File.dirname(__FILE__)}/conf/db.conf"
@@ -20,11 +29,8 @@ class MetricServer < Sinatra::Base
   DataMapper::Logger.new($stdout, :debug)
   # A Postgres connection:
   DataMapper.setup(:default, "postgres://#{config['username']}:#{config['password']}@#{config['hostname']}/#{config['database']}")
+  require "metric"
 
-  set :public_folder, File.dirname(__FILE__) + '/public'
-  set :static, TRUE
-  require 'slim'
-  require "#{File.dirname(__FILE__)}/models/metric"
   Metric.raise_on_save_failure = true
 
   attr_accessor :metrics, :avg
