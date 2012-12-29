@@ -1,22 +1,26 @@
 require 'rubygems'
+require 'yaml'
 
 # If you're using bundler, you will need to add this
 require 'bundler/setup'
 require 'sinatra/base'
-require 'sinatra/config_file'
 
 # Databasey stuff
 require 'data_mapper' # metagem, requires common plugins too.
 require 'dm-postgres-adapter'
 
 class MetricServer < Sinatra::Base
-  register Sinatra::ConfigFile
-  config_file "#{File.dirname(__FILE__)}/conf/db.conf"
+  config_file = "#{File.dirname(__FILE__)}/conf/db.conf"
+  unless File.exists?(config_file)
+    STDERR.puts "wtf. no config file at #{config_file}"
+    exit 1
+  end
+  config = YAML.load_file(config_file)
 
   # If you want the logs displayed you have to do this before the call to setup
   DataMapper::Logger.new($stdout, :debug)
   # A Postgres connection:
-  DataMapper.setup(:default, "postgres://#{settings.username}:#{settings.password}@#{settings.hostname}/#{settings.database}")
+  DataMapper.setup(:default, "postgres://#{config['username']}:#{config['password']}@#{config['hostname']}/#{config['database']}")
 
   set :public_folder, File.dirname(__FILE__) + '/public'
   set :static, TRUE
