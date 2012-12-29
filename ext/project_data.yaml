@@ -1,0 +1,16 @@
+---
+project: 'metrics'
+author: 'Matthaus Owens'
+email: 'matthaus@puppetlabs.com'
+homepage: 'https://github.com/haus/metrics-server'
+summary: 'Sinatra based metrics web application'
+description: 'A sinatra based web application run on rack, passenger and apache'
+# files and gem_files are space separated lists
+files:
+  - "[A-Z]*"
+  - examples
+  - models
+  - public
+  - views
+  - config.ru
+  - metrics_server.rb

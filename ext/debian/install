@@ -1,0 +1,4 @@
+config.ru	usr/share/metrics
+models		usr/share/metrics
+public		usr/share/metrics
+views			usr/share/metrics
