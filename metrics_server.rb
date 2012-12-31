@@ -27,8 +27,9 @@ class MetricServer < Sinatra::Base
 
   # If you want the logs displayed you have to do this before the call to setup
   DataMapper::Logger.new($stdout, :debug)
+  config_string = "postgres://#{config['username']}:#{config['password']}@#{config['hostname']}#{config.has_key?('port') ? ":#{config['port']}" : ""}/#{config['database']}"
   # A Postgres connection:
-  DataMapper.setup(:default, "postgres://#{config['username']}:#{config['password']}@#{config['hostname']}/#{config['database']}")
+  DataMapper.setup(:default, config_string)
   require "metric"
 
   attr_accessor :metrics, :avg
