@@ -2,6 +2,8 @@ require 'rubygems'
 require 'yaml'
 require 'sinatra/base'
 
+DB_ERR_MSG = "Database connection is not configured. No config file found at /etc/metrics/db.conf or #{File.dirname(__FILE__)}/conf/db.conf}. Please edit db.conf.example with the correct connection information."
+
 # Add models to the load path to make requiring metrics easier
 $: << "#{File.dirname(__FILE__)}/models"
 
@@ -24,42 +26,43 @@ class MetricServer < Sinatra::Base
     nil
   end
 
-  @config = YAML.load_file(config_file) if config_file
+  config = YAML.load_file(config_file) if config_file
 
-  if @config
+  if config
+    @@configured = TRUE
     # If you want the logs displayed you have to do this before the call to setup
     DataMapper::Logger.new($stdout, :debug)
-    config_string = "postgres://#{@config['username']}:#{@config['password']}@#{@config['hostname']}#{@config.has_key?('port') ? ":#{@config['port']}" : ""}/#{@config['database']}"
+    config_string = "postgres://#{config['username']}:#{config['password']}@#{config['hostname']}#{config.has_key?('port') ? ":#{config['port']}" : ""}/#{config['database']}"
     # A Postgres connection:
     DataMapper.setup(:default, config_string)
     require "metric"
   end
 
   get '/' do
-    if @config
+    if @@configured
       @metrics = Metric.all
       slim :home
     else
-      @error = "No db configuration information could be found in /etc/metrics/db.conf or /usr/share/metrics/conf/db.conf"
+      @error = DB_ERR_MSG
       slim :error
     end
   end
 
   get '/package/:package' do
-    if @config
+    if @@configured
       @metrics = Metric.all(:package => params[:package])
       sum = 0
       @metrics.each { |row| sum += row.build_time }
       @avg = sum.to_f / @metrics.size.to_f
       slim :package
     else
-      @error = "No db configuration information could be found in /etc/metrics/db.conf or /usr/share/metrics/conf/db.conf"
+      @error = DB_ERR_MSG
       slim :error
     end
   end
 
   post '/metrics' do
-    if @config
+    if @@configured
       begin
         # Do math on minutes section, combine with seconds bits.
         if (time = params[:build_time].match(/(\d*)m(\d*\.\d*)s/))
@@ -74,8 +77,8 @@ class MetricServer < Sinatra::Base
         [418, "#{e.message} AND #{params.inspect}"]
       end
     else
+      @error = DB_ERR_MSG
       slim :error
-      @error = "No db configuration information could be found in /etc/metrics/db.conf or /usr/share/metrics/conf/db.conf"
     end
   end
 
