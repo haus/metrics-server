@@ -3,4 +3,5 @@ Gemfile             usr/share/metrics
 models              usr/share/metrics
 public              usr/share/metrics
 views               usr/share/metrics
+metrics_server.rb   usr/share/metrics
 ext/metrics.conf    etc/apache2/conf.d
