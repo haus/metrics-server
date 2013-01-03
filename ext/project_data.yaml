@@ -9,6 +9,7 @@ description: 'A sinatra based web application run on rack, passenger and apache'
 files:
   - "[A-Z]*"
   - examples
+  - ext
   - models
   - public
   - views
