@@ -8,6 +8,6 @@ Homepage: http://www.puppetlabs.com/
 
 Package: metrics
 Architecture: all
-Depends: ${misc:Depends}, libpq-dev, apache2, ruby-rack, ruby-passenger, ruby-sinatra, libapache2-mod-passenger, ruby | ruby-interpreter, ruby-dev, build-essential, bundler
+Depends: ${misc:Depends}, libpq-dev, apache2, ruby-rack, ruby-passenger, ruby-sinatra, ruby-tilt, ruby-rack-protection, libapache2-mod-passenger, ruby | ruby-interpreter, ruby-dev, build-essential, bundler
 Description: Sinatra based metrics web application
  A sinatra based web application run on rack, passenger and apache
