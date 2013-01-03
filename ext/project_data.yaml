@@ -14,5 +14,5 @@ files:
   - public
   - views
   - config.ru
-  - metrics.gemfile
+  - Gemfile
   - metrics_server.rb
