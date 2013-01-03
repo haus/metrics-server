@@ -1,0 +1,3 @@
+#!/bin/bash
+
+/sbin/service apache2 restart
