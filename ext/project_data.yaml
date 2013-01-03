@@ -8,6 +8,7 @@ description: 'A sinatra based web application run on rack, passenger and apache'
 # files and gem_files are space separated lists
 files:
   - README.md
+  - conf
   - examples
   - ext
   - models
