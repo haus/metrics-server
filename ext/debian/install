@@ -1,4 +1,5 @@
 config.ru           usr/share/metrics
+metrics.gemfile     usr/share/metrics
 models              usr/share/metrics
 public              usr/share/metrics
 views               usr/share/metrics
