@@ -86,5 +86,6 @@ class MetricServer < Sinatra::Base
     slim :error
   end
 
-  run!
+  # start the server if ruby file executed directly
+  run! if app_file == $0
 end
