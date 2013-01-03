@@ -12,14 +12,15 @@ require 'net/http'
 uri = URI(@metric_server)
 res = Net::HTTP.post_form(
   uri,
-  'date'        => Time.now.to_s,
-  'package'     => @package,
-  'dist'        => @dist,
-  'build_time'  => @build_time,
-  'build_user'  => @build_user,
-  'build_loc'   => @build_loc,
-  'version'     => @version,
-  'pe_version'  => @pe_version,
-  )
+  {
+    'date'        => Time.now.to_s,
+    'package'     => @package,
+    'dist'        => @dist,
+    'build_time'  => @build_time,
+    'build_user'  => @build_user,
+    'build_loc'   => @build_loc,
+    'version'     => @version,
+    'pe_version'  => @pe_version,
+  })
 
 puts res.body
