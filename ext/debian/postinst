@@ -1,0 +1,7 @@
+#!/bin/bash
+
+pushd /usr/share/metrics &> /dev/null
+  /usr/bin/bundle install
+popd
+
+/usr/sbin/service apache2 restart

@@ -7,11 +7,13 @@ summary: 'Sinatra based metrics web application'
 description: 'A sinatra based web application run on rack, passenger and apache'
 # files and gem_files are space separated lists
 files:
-  - "[A-Z]*"
+  - README.md
+  - conf
   - examples
   - ext
   - models
   - public
   - views
   - config.ru
+  - Gemfile
   - metrics_server.rb
