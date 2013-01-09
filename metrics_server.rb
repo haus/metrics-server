@@ -18,12 +18,36 @@ $: << "#{File.dirname(__FILE__)}/models"
 end
 
 class MetricServer < Sinatra::Base
-  attr_accessor :metrics, :avg, :error
+  attr_accessor :metrics, :avg, :error, :builds, :last_sat, :next_sat
   def self.config_file
     ["/etc/metrics/db.conf", "#{File.dirname(__FILE__)}/conf/db.conf"].each do |config|
       return config if File.exists?(config)
     end
     nil
+  end
+
+  def get_saturdays
+    today = Time.now
+    @next_sat = today.dup
+    while not @next_sat.saturday?
+      @next_sat += 86400
+    end
+    @next_sat = Time.mktime(@next_sat.year, @next_sat.month, @next_sat.day) + 86399
+
+    @last_sat = today.dup
+    while not @last_sat.saturday?
+      @last_sat -= 86400
+    end
+    @last_sat = Time.mktime(@last_sat.year, @last_sat.month, @last_sat.day)
+  end
+
+  def render_page(*args, &block)
+    if @@configured
+      yield block
+    else
+      @error = DB_ERR_MSG
+      slim :error
+    end
   end
 
   config = YAML.load_file(config_file) if config_file
@@ -36,33 +60,48 @@ class MetricServer < Sinatra::Base
     # A Postgres connection:
     DataMapper.setup(:default, config_string)
     require "metric"
+  else
+    @@configured = FALSE
   end
 
   get '/' do
-    if @@configured
+    render_page do
       @metrics = Metric.all
       slim :home
-    else
-      @error = DB_ERR_MSG
-      slim :error
     end
   end
 
   get '/package/:package' do
-    if @@configured
+    render_page do
       @metrics = Metric.all(:package => params[:package])
       sum = 0
       @metrics.each { |row| sum += row.build_time }
       @avg = sum.to_f / @metrics.size.to_f
       slim :package
-    else
-      @error = DB_ERR_MSG
-      slim :error
+    end
+  end
+
+  get '/summary' do
+    render_page do
+      get_saturdays
+      @builds = Hash.new
+      @builds[:pe] = Metric.all(:date.gte => @last_sat.to_s, :date.lte => @next_sat.to_s, :package => 'enterprise-dist').size
+      @builds[:total] = Metric.all(:date.gte => @last_sat.to_s, :date.lte => @next_sat.to_s).size
+      @builds[:uniq] = Metric.all(:unique => true, :fields => [:package], :date.gte => @last_sat, :date.lte => @next_sat, :order => [:package.asc]).size
+      @builds[:jenkins] = Metric.all(:fields => [:package], :date.gte => @last_sat, :date.lte => @next_sat, :build_user => 'jenkins').size
+      slim :summary
+    end
+  end
+
+  get '/weekly' do
+    render_page do
+      get_saturdays
+
     end
   end
 
   post '/metrics' do
-    if @@configured
+    render_page do
       begin
         # Do math on minutes section, combine with seconds bits.
         if (time = params[:build_time].match(/(\d*)m(\d*\.\d*)s/))
@@ -76,9 +115,6 @@ class MetricServer < Sinatra::Base
       rescue Exception => e
         [418, "#{e.message} AND #{params.inspect}"]
       end
-    else
-      @error = DB_ERR_MSG
-      slim :error
     end
   end
 

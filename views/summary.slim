@@ -1,0 +1,38 @@
+doctype html
+html
+  head
+    title Weekly Metrics
+    meta name="keywords" content="template language"
+    meta name="author" content="Team Delivery"
+    link rel="stylesheet" href="/css/blue/style.css" type="text/css" media="print, projection, screen"
+    script type="text/javascript" src="/js/jquery-latest.js"
+    script type="text/javascript" src="/js/jquery.tablesorter.min.js"
+    javascript:
+      $(document).ready(function() { $("#metrics").tablesorter(); $("#metrics").addClass("tablesorter"); });
+
+  body
+    h1 Build Metrics
+
+    #content
+      p This page shows all the metrics
+      - if builds.is_a?(Hash)
+
+        - if builds[:pe]
+          p Total PE Builds: #{builds[:pe]}
+
+        - if builds[:total]
+          p Total Builds: #{builds[:total]}
+
+        - if builds[:uniq]
+          p Unique Packages built: #{builds[:uniq]}
+
+        - if builds[:jenkins]
+          p # of builds sponsored by team jenkins: #{builds[:jenkins]}
+
+      - else
+
+        p No items found Please add some inventory.
+          Thank you!
+
+    div id="footer"
+      Copyright &copy; #{Time.now.year} Team Delivery
