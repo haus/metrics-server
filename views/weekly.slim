@@ -1,50 +1,37 @@
-doctype html
-html
-  head
-    title Weekly Metrics
-    meta name="keywords" content="template language"
-    meta name="author" content="Team Delivery"
-    link rel="stylesheet" href="/css/blue/style.css" type="text/css" media="print, projection, screen"
-    script type="text/javascript" src="/js/jquery-latest.js"
-    script type="text/javascript" src="/js/jquery.tablesorter.min.js"
-    javascript:
-      $(document).ready(function() { $("#metrics").tablesorter(); $("#metrics").addClass("tablesorter"); });
+== slim :header
+body
+  h1 = title
+  #content
+    p This page shows all the metrics
 
-  body
-    h1 Build Metrics
+  - if metrics.any?
+    table#metrics border="1"
+      thead
+        tr
+          th Date
+          th Package
+          th Dist
+          th Build Time
+          th User
+          th Location
+          th Version
+          th PE Version
+      tbody
+        - for metric in metrics do
+          tr align="center"
+            td.date         = metric.date.to_date
+            td.package      = metric.package
+            td.dist         = metric.dist
+            td.build_time   = metric.build_time
+            td.build_user   = metric.build_user
+            td.build_loc    = metric.build_loc
+            td.version      = metric.version
+            td.pe_version   = metric.pe_version
+      tfoot
+        td | put averages here
+        td  = avg
+  - else
+    p No items found Please add some inventory.
+      Thank you!
 
-    #content
-      p This page shows all the metrics
-
-    - if metrics.any?
-      table#metrics border="1"
-        thead
-          tr
-            th Date
-            th Package
-            th Dist
-            th Build Time
-            th User
-            th Location
-            th Version
-            th PE Version
-        tbody
-          - for metric in metrics do
-            tr align="center"
-              td.date         = metric.date.to_date
-              td.package      = metric.package
-              td.dist         = metric.dist
-              td.build_time   = metric.build_time
-              td.build_user   = metric.build_user
-              td.build_loc    = metric.build_loc
-              td.version      = metric.version
-              td.pe_version   = metric.pe_version
-        tfoot
-          td | put averages here
-          td  = avg
-    - else
-      p No items found Please add some inventory.
-        Thank you!
-
-    div id="footer"
-      Copyright &copy; #{Time.now.year} Team Delivery
+  == slim :footer

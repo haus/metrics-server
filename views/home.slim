@@ -1,48 +1,40 @@
-doctype html
-html
-  head
-    title Metrics
-    meta name="keywords" content="template language"
-    meta name="author" content="Team Delivery"
-    link rel="stylesheet" href="/css/blue/style.css" type="text/css" media="print, projection, screen"
-    script type="text/javascript" src="/js/jquery-latest.js"
-    script type="text/javascript" src="/js/jquery.tablesorter.min.js"
-    javascript:
-      $(document).ready(function() { $("#metrics").tablesorter(); $("#metrics").addClass("tablesorter"); });
+== slim :header
+body
+  h1 Build Metrics
 
-  body
-    h1 Build Metrics
+  #content
+  - if last_sat and next_sat
+    p This page shows all the metrics from #{last_sat.strftime('%m-%d-%Y')} to #{next_sat.strftime('%m-%d-%Y')}
 
-    #content
-      p This page shows all the metrics
+  - else
+    p This page shows all the metrics
 
-    - if metrics.any?
-      table#metrics border="1"
-        thead
-          tr
-            th Date
-            th Package
-            th Dist
-            th Build Time
-            th User
-            th Location
-            th Version
-            th PE Version
-        tbody
-          - for metric in metrics do
-            tr align="center"
-              td.date         = metric.date.to_date
-              td.package
-                a href="/package/#{metric.package}" #{metric.package}
-              td.dist         = metric.dist
-              td.build_time   = metric.build_time
-              td.build_user   = metric.build_user
-              td.build_loc    = metric.build_loc
-              td.version      = metric.version
-              td.pe_version   = metric.pe_version
-    - else
-      p No items found Please add some inventory.
-        Thank you!
+  - if metrics.any?
+    table#metrics border="1"
+      thead
+        tr
+          th Date
+          th Package
+          th Dist
+          th Build Time
+          th User
+          th Location
+          th Version
+          th PE Version
+      tbody
+        - for metric in metrics do
+          tr align="center"
+            td.date         = metric.date.to_date
+            td.package
+              a href="/package/#{metric.package}" #{metric.package}
+            td.dist         = metric.dist
+            td.build_time   = metric.build_time
+            td.build_user   = metric.build_user
+            td.build_loc    = metric.build_loc
+            td.version      = metric.version
+            td.pe_version   = metric.pe_version
+  - else
+    p No items found Please add some inventory.
+      Thank you!
 
-    div id="footer"
-      Copyright &copy; #{Time.now.year} Team Delivery
+  == slim :footer

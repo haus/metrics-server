@@ -18,7 +18,7 @@ $: << "#{File.dirname(__FILE__)}/models"
 end
 
 class MetricServer < Sinatra::Base
-  attr_accessor :metrics, :avg, :error, :builds, :last_sat, :next_sat
+  attr_accessor :metrics, :avg, :error, :builds, :last_sat, :next_sat, :title
   def self.config_file
     ["/etc/metrics/db.conf", "#{File.dirname(__FILE__)}/conf/db.conf"].each do |config|
       return config if File.exists?(config)
@@ -65,6 +65,7 @@ class MetricServer < Sinatra::Base
   end
 
   get '/' do
+    @title = "Package Builds"
     render_page do
       @metrics = Metric.all
       slim :home
@@ -73,6 +74,7 @@ class MetricServer < Sinatra::Base
 
   get '/package/:package' do
     render_page do
+      @title = "Package Builds for #{params[:package]}"
       @metrics = Metric.all(:package => params[:package])
       sum = 0
       @metrics.each { |row| sum += row.build_time }
@@ -82,21 +84,25 @@ class MetricServer < Sinatra::Base
   end
 
   get '/summary' do
+    @title = "Weekly Summary"
     render_page do
       get_saturdays
       @builds = Hash.new
       @builds[:pe] = Metric.all(:date.gte => @last_sat.to_s, :date.lte => @next_sat.to_s, :package => 'enterprise-dist').size
       @builds[:total] = Metric.all(:date.gte => @last_sat.to_s, :date.lte => @next_sat.to_s).size
       @builds[:uniq] = Metric.all(:unique => true, :fields => [:package], :date.gte => @last_sat, :date.lte => @next_sat, :order => [:package.asc]).size
+      @builds[:hosts] = Metric.all(:unique => true, :fields => [:build_loc], :date.gte => @last_sat, :date.lte => @next_sat, :order => [:build_loc.asc]).size
       @builds[:jenkins] = Metric.all(:fields => [:package], :date.gte => @last_sat, :date.lte => @next_sat, :build_user => 'jenkins').size
       slim :summary
     end
   end
 
   get '/weekly' do
+    @title = "Weekly Builds"
     render_page do
       get_saturdays
-
+      @metrics = Metric.all(:date.gte => @last_sat, :date.lte => @next_sat)
+      slim :home
     end
   end
 
@@ -119,6 +125,7 @@ class MetricServer < Sinatra::Base
   end
 
   error do
+    @title = "BIG PROBLEMS!"
     slim :error
   end
 

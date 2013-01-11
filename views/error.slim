@@ -1,15 +1,4 @@
-doctype html
-html
-  head
-    title Metrics
-    meta name="keywords" content="template language"
-    meta name="author" content="Team Delivery"
-    link rel="stylesheet" href="/css/blue/style.css" type="text/css" media="print, projection, screen"
-    script type="text/javascript" src="/js/jquery-latest.js"
-    script type="text/javascript" src="/js/jquery.tablesorter.min.js"
-    javascript:
-      $(document).ready(function() { $("#metrics").tablesorter(); $("#metrics").addClass("tablesorter"); });
-
+== slim :header
   body
     h1 Server Error
 
@@ -20,6 +9,4 @@ html
       - else
         p An error has occurred: #{env['sinatra.error'].name} #{env['sinatra.error'].message}
 
-    div id="footer"
-      Copyright &copy; #{Time.now.year} Team Delivery
-
+    == slim :footer
