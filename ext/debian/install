@@ -5,4 +5,3 @@ public                usr/share/metrics
 views                 usr/share/metrics
 metrics_server.rb     usr/share/metrics
 conf/db.conf.example  etc/metrics
-ext/metrics.conf      etc/apache2/conf.d
